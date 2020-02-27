@@ -413,3 +413,42 @@ test('generates highlighted text', function() {
     writer.close('pre');
     return assert.equal(writer.asString(), "```highlighted text```");
 });
+
+test('escapes all nested tags inside a html table if preserveAsHTML option given for that tag', function() {
+    var writer = mdWriter.writer({preserveAsHTML: ['table']});
+    writer.open("p");
+    writer.text("paragraph 1");
+    writer.close("p");
+    writer.open("table");
+    writer.open("tr");
+    writer.open("td");
+
+    writer.open("ol");
+    writer.open("li");
+    writer.text("One");
+    writer.close("li");
+    writer.open("li");
+    writer.text("Two");
+    writer.close("li");
+    writer.close("ol");
+
+    writer.close("td");
+    writer.close("tr");
+    writer.close("table");
+    writer.open("p");
+    writer.text("paragraph 2");
+    writer.close("p");
+    return assert.equal(writer.asString(), "paragraph 1\n\n<table><tr><td><ol><li>One</li><li>Two</li></ol></td></tr></table>\n\nparagraph 2\n\n");
+});
+
+test('escapes self closing html tag if preserveAsHTML option given for that tag', function() {
+    var writer = mdWriter.writer({preserveAsHTML: ['img']});
+    writer.open("p");
+    writer.text("paragraph 1");
+    writer.close("p");
+    writer.selfClosing("img", {"src": "http://example.com/image.jpg", "alt": "Alt Text"});
+    writer.open("p");
+    writer.text("paragraph 2");
+    writer.close("p");
+    return assert.equal(writer.asString(), "paragraph 1\n\n<img src=\"http://example.com/image.jpg\" alt=\"Alt Text\" />\n\nparagraph 2\n\n");
+});
