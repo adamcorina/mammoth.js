@@ -34,5 +34,9 @@ parser.addArgument(["--style-map"], {
     help: "File containg a style map."
 });
 
+parser.addArgument(["--preserve-as-html"], {
+    type: "string",
+    help: "Html tags which are sepparated by commas; Taken into consideration if output format is markdown. The tags will remain html in the output."
+});
 
 main(parser.parseArgs());
